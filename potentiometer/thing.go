@@ -131,6 +131,7 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 }
 func (ua *UnitAsset) readUART() {
 	reader := bufio.NewReader(ua.uartPort)
+	oldADC := -1
 
 	for {
 		line, err := reader.ReadString('\n')
@@ -140,6 +141,7 @@ func (ua *UnitAsset) readUART() {
 		}
 
 		line = strings.TrimSpace(line)
+
 		cleanLine := ""
 		for _, r := range line {
 			if r >= '0' && r <= '9' {
@@ -156,7 +158,12 @@ func (ua *UnitAsset) readUART() {
 			continue
 		}
 		ua.lastADC = adc
+		newADC := adc
 		ua.RudderPosition = adcToPercent(adc)
+		if oldADC != newADC {
+			log.Println("Old value and new value:", oldADC, newADC)
+			oldADC = newADC
+		}
 	}
 }
 
