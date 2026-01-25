@@ -131,7 +131,6 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 }
 func (ua *UnitAsset) readUART() {
 	reader := bufio.NewReader(ua.uartPort)
-	oldADC := -1
 
 	for {
 		line, err := reader.ReadString('\n')
