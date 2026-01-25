@@ -141,7 +141,17 @@ func (ua *UnitAsset) readUART() {
 		log.Println("Raw UART line:", fmt.Sprintf("%q", line))
 
 		line = strings.TrimSpace(line)
-		adc, err := strconv.Atoi(line)
+		cleanLine := ""
+		for _, r := range line {
+			if r >= '0' && r <= '9' {
+				cleanLine += string(r)
+			}
+		}
+		if cleanLine == "" {
+			log.Println("No digit in line:", line)
+			continue
+		}
+		adc, err := strconv.Atoi(cleanLine)
 		if err != nil {
 			log.Println("Failed to parse ADC:", line, err)
 			continue
