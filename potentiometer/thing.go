@@ -186,7 +186,7 @@ func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
 }
 
 func adcToPercent(adc int) int {
-	return (adc * 100) / 4095
+	return ((adc * 100) / 4095) + 1
 }
 func (ua *UnitAsset) getPositiom() (f forms.SignalA_v1a) {
 	f.NewForm()
