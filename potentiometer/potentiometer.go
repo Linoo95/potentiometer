@@ -27,7 +27,7 @@ func main() {
 		Description: "Provides a rudder direction service where 50% is in line with the boat",
 		Details:     map[string][]string{"Developer": {"Arrowhead"}},
 		ProtoPort:   map[string]int{"https": 0, "http": 20151, "coap": 0},
-		InfoLink:    "https://github.com/sdoque/systems/tree/main/parallax",
+		InfoLink:    "https://github.com/Linoo95/potentiometer/tree/main/potentiometer",
 		DName: pkix.Name{
 			CommonName:         sys.Name,
 			Organization:       []string{"Synecdoque"},

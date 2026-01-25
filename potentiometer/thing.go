@@ -21,6 +21,8 @@ type Traits struct {
 	Baud int    `json:"baud"`
 }
 
+// /dev/ttyACM0
+
 // UnitAsset type models the unit asset (interface) of the system
 type UnitAsset struct {
 	Name        string              `json:"name"`
