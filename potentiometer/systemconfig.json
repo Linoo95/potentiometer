@@ -1,0 +1,61 @@
+{
+    "systemname": "rudder",
+    "unit_assets": [
+        {
+            "name": "Potentiometer",
+            "details": {
+                "Location": [
+                    "Microcontroller"
+                ],
+                "Model": [
+                    "Potentiometer"
+                ]
+            },
+            "services": [
+                {
+                    "definition": "rudder position",
+                    "subpath": "position",
+                    "details": {
+                        "Forms": [
+                            "SignalA_v1a"
+                        ],
+                        "Unit": [
+                            "Percent"
+                        ]
+                    },
+                    "registrationPeriod": 30,
+                    "costUnit": ""
+                }
+            ],
+            "traits": [
+                {
+                    "port": "C0M3",
+                    "baud": 115200
+                }
+            ]
+        }
+    ],
+    "protocolsNports": {
+        "coap": 0,
+        "http": 20151,
+        "https": 0
+    },
+    "coreSystems": [
+        {
+            "coreSystem": "serviceregistrar",
+            "url": "http://localhost:20102/serviceregistrar/registry"
+        },
+        {
+            "coreSystem": "orchestrator",
+            "url": "http://localhost:20103/orchestrator/orchestration"
+        },
+        {
+            "coreSystem": "ca",
+            "url": "http://localhost:20100/ca/certification"
+        },
+        {
+            "coreSystem": "maitreD",
+            "url": "http://localhost:20101/maitreD/maitreD"
+        }
+    ]
+}
