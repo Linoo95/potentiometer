@@ -138,7 +138,6 @@ func (ua *UnitAsset) readUART() {
 			log.Println("UART read error:", err)
 			continue
 		}
-		log.Println("Raw UART line:", fmt.Sprintf("%q", line))
 
 		line = strings.TrimSpace(line)
 		cleanLine := ""
