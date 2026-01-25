@@ -158,12 +158,8 @@ func (ua *UnitAsset) readUART() {
 			continue
 		}
 		ua.lastADC = adc
-		newADC := adc
 		ua.RudderPosition = adcToPercent(adc)
-		if oldADC != newADC {
-			log.Println("Old value and new value:", oldADC, newADC)
-			oldADC = newADC
-		}
+
 	}
 }
 
