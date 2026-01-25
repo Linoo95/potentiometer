@@ -78,7 +78,7 @@ func initTemplate() components.UnitAsset {
 
 	// var uat components.UnitAsset // this is an interface, which we then initialize
 	uat := &UnitAsset{
-		Name:    "Potentiometer",
+		Name:    "Potentiometer_1",
 		Details: map[string][]string{"Model": {"Potentiometer"}, "Location": {"Microcontroller"}},
 		ServicesMap: components.Services{
 			position.SubPath: &position, // Inline assignment of the rotation service
@@ -111,8 +111,7 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 	port, err := serial.OpenPort(configure)
 
 	if err != nil {
-		log.Printf("failed to open UART: %v", err)
-		return ua, func() {}
+		log.Fatal("failed to open UART:", err)
 	}
 
 	ua.uartPort = port
