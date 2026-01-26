@@ -20,7 +20,16 @@ func TestAdcToPercent_Half(t *testing.T) {
 		t.Fail()
 	}
 }
-
+func TestAdcToPercent_NegativeNum(t *testing.T) {
+	if adcToPercent(-100) != 0 {
+		t.Fail()
+	}
+}
+func TestAdcToPercent_ToBigNum(t *testing.T) {
+	if adcToPercent(5000) != 4095 {
+		t.Fail()
+	}
+}
 func TestCleanLine_NoNumber(t *testing.T) {
 	if cleanLine("woopada") != "" {
 		t.Fail()
