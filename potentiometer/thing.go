@@ -140,19 +140,7 @@ func (ua *UnitAsset) readUART() {
 			continue
 		}
 
-		line = strings.TrimSpace(line)
-
-		cleanLine := ""
-		for _, r := range line {
-			if r >= '0' && r <= '9' {
-				cleanLine += string(r)
-			}
-		}
-		if cleanLine == "" {
-			log.Println("No digit in line:", line)
-			continue
-		}
-		adc, err := strconv.Atoi(cleanLine)
+		adc, err := strconv.Atoi(cleanLine(line))
 		if err != nil {
 			log.Println("Failed to parse ADC:", line, err)
 			continue
@@ -161,6 +149,20 @@ func (ua *UnitAsset) readUART() {
 		ua.RudderPosition = adcToPercent(adc)
 
 	}
+}
+func cleanLine(line string) string {
+	line = strings.TrimSpace(line)
+
+	cleanLine := ""
+	for _, r := range line {
+		if r >= '0' && r <= '9' {
+			cleanLine += string(r)
+		}
+	}
+	if cleanLine == "" {
+		log.Println("No digit in line:", line)
+	}
+	return cleanLine
 }
 
 // UnmarshalTraits unmarshals a slice of json.RawMessage into a slice of Traits.
@@ -184,7 +186,7 @@ func adcToPercent(adc int) int {
 	if adc > 4095 {
 		return 4095
 	}
-	return ((adc * 100) / 4095) + 1
+	return (adc * 100) / 4095
 }
 func (ua *UnitAsset) getPosition() (f forms.SignalA_v1a) {
 	f.NewForm()
@@ -195,25 +197,3 @@ func (ua *UnitAsset) getPosition() (f forms.SignalA_v1a) {
 
 	return f
 }
-
-// func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
-// 	switch servicePath {
-// 	case "position":
-// 		ua.position(w, r)
-// 	default:
-// 		http.Error(
-// 			w,
-// 			"Invalid service request",
-// 			http.StatusBadRequest,
-// 		)
-// 	}
-// }
-// func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
-// 	switch r.Method {
-// 	case "GET":
-// 		form := ua.getPosition()
-// 		usecases.HTTPProcessGetRequest(w, r, &form)
-// 	default:
-// 		http.Error(w, "not supported", http.StatusNotFound)
-// 	}
-// }
