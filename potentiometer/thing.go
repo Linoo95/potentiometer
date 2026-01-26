@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	//"net/http"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -201,24 +201,24 @@ func (ua *UnitAsset) getPosition() (f forms.SignalA_v1a) {
 	return f
 }
 
-// func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
-// 	switch servicePath {
-// 	case "position":
-// 		ua.position(w, r)
-// 	default:
-// 		http.Error(
-// 			w,
-// 			"Invalid service request",
-// 			http.StatusBadRequest,
-// 		)
-// 	}
-// }
-// func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
-// 	switch r.Method {
-// 	case "GET":
-// 		form := ua.getPosition()
-// 		usecases.HTTPProcessGetRequest(w, r, &form)
-// 	default:
-// 		http.Error(w, "not supported", http.StatusNotFound)
-// 	}
-// }
+func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
+	switch servicePath {
+	case "position":
+		ua.position(w, r)
+	default:
+		http.Error(
+			w,
+			"Invalid service request",
+			http.StatusBadRequest,
+		)
+	}
+}
+func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		form := ua.getPosition()
+		usecases.HTTPProcessGetRequest(w, r, &form)
+	default:
+		http.Error(w, "not supported", http.StatusNotFound)
+	}
+}
