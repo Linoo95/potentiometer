@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
+
+	//"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -104,6 +105,21 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 		ua.Traits = traits[0]
 	}
 	// open UART connection
+	go ua.openUARTconnection()
+
+	go ua.readUART()
+
+	cleanup := func() {
+		log.Println("closing potentiometer", ua.Name)
+		if ua.uartPort != nil {
+			_ = ua.uartPort.Close()
+		}
+	}
+
+	return ua, cleanup
+}
+
+func (ua *UnitAsset) openUARTconnection() {
 	log.Printf("Potentiometer %s using UART %s @ %d baud", ua.Name, ua.Port, ua.Baud)
 	configure := &serial.Config{
 		Name: ua.Traits.Port,
@@ -117,18 +133,8 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 	}
 
 	ua.uartPort = port
-
-	go ua.readUART()
-
-	cleanup := func() {
-		log.Println("closing potentiometer", ua.Name)
-		if ua.uartPort != nil {
-			_ = ua.uartPort.Close()
-		}
-	}
-
-	return ua, cleanup
 }
+
 func (ua *UnitAsset) readUART() {
 	reader := bufio.NewReader(ua.uartPort)
 
@@ -175,20 +181,17 @@ func UnmarshalTraits(rawTraits []json.RawMessage) ([]Traits, error) {
 	return traitsList, nil
 }
 
-func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		form := ua.getPositiom()
-		usecases.HTTPProcessGetRequest(w, r, &form)
-	default:
-		http.Error(w, "not supported", http.StatusNotFound)
-	}
-}
-
+// Conver ADC value(0 - 4095) to Percent
 func adcToPercent(adc int) int {
+	if adc < 0 {
+		return 0
+	}
+	if adc > 4095 {
+		return 4095
+	}
 	return ((adc * 100) / 4095) + 1
 }
-func (ua *UnitAsset) getPositiom() (f forms.SignalA_v1a) {
+func (ua *UnitAsset) getPosition() (f forms.SignalA_v1a) {
 	f.NewForm()
 
 	f.Value = float64(ua.RudderPosition)
@@ -197,15 +200,25 @@ func (ua *UnitAsset) getPositiom() (f forms.SignalA_v1a) {
 
 	return f
 }
-func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
-	switch servicePath {
-	case "position":
-		ua.position(w, r)
-	default:
-		http.Error(
-			w,
-			"Invalid service request",
-			http.StatusBadRequest,
-		)
-	}
-}
+
+// func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
+// 	switch servicePath {
+// 	case "position":
+// 		ua.position(w, r)
+// 	default:
+// 		http.Error(
+// 			w,
+// 			"Invalid service request",
+// 			http.StatusBadRequest,
+// 		)
+// 	}
+// }
+// func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
+// 	switch r.Method {
+// 	case "GET":
+// 		form := ua.getPosition()
+// 		usecases.HTTPProcessGetRequest(w, r, &form)
+// 	default:
+// 		http.Error(w, "not supported", http.StatusNotFound)
+// 	}
+// }
