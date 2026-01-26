@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 
-	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -105,21 +104,6 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 		ua.Traits = traits[0]
 	}
 	// open UART connection
-	go ua.openUARTconnection()
-
-	go ua.readUART()
-
-	cleanup := func() {
-		log.Println("closing potentiometer", ua.Name)
-		if ua.uartPort != nil {
-			_ = ua.uartPort.Close()
-		}
-	}
-
-	return ua, cleanup
-}
-
-func (ua *UnitAsset) openUARTconnection() {
 	log.Printf("Potentiometer %s using UART %s @ %d baud", ua.Name, ua.Port, ua.Baud)
 	configure := &serial.Config{
 		Name: ua.Traits.Port,
@@ -133,6 +117,17 @@ func (ua *UnitAsset) openUARTconnection() {
 	}
 
 	ua.uartPort = port
+
+	go ua.readUART()
+
+	cleanup := func() {
+		log.Println("closing potentiometer", ua.Name)
+		if ua.uartPort != nil {
+			_ = ua.uartPort.Close()
+		}
+	}
+
+	return ua, cleanup
 }
 
 func (ua *UnitAsset) readUART() {
@@ -201,24 +196,24 @@ func (ua *UnitAsset) getPosition() (f forms.SignalA_v1a) {
 	return f
 }
 
-func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
-	switch servicePath {
-	case "position":
-		ua.position(w, r)
-	default:
-		http.Error(
-			w,
-			"Invalid service request",
-			http.StatusBadRequest,
-		)
-	}
-}
-func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		form := ua.getPosition()
-		usecases.HTTPProcessGetRequest(w, r, &form)
-	default:
-		http.Error(w, "not supported", http.StatusNotFound)
-	}
-}
+// func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
+// 	switch servicePath {
+// 	case "position":
+// 		ua.position(w, r)
+// 	default:
+// 		http.Error(
+// 			w,
+// 			"Invalid service request",
+// 			http.StatusBadRequest,
+// 		)
+// 	}
+// }
+// func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
+// 	switch r.Method {
+// 	case "GET":
+// 		form := ua.getPosition()
+// 		usecases.HTTPProcessGetRequest(w, r, &form)
+// 	default:
+// 		http.Error(w, "not supported", http.StatusNotFound)
+// 	}
+// }

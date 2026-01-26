@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 
-	//"net/http"
+	"net/http"
 	"time"
 
 	"github.com/sdoque/mbaigo/components"
@@ -76,4 +76,25 @@ func main() {
 	fmt.Println("\nshuting down system", sys.Name)
 	cancel()                    // cancel the context, signaling the goroutines to stop
 	time.Sleep(3 * time.Second) // allow the go routines to be executed, which might take more time than the main routine to end
+}
+func (ua *UnitAsset) Serving(w http.ResponseWriter, r *http.Request, servicePath string) {
+	switch servicePath {
+	case "position":
+		ua.position(w, r)
+	default:
+		http.Error(
+			w,
+			"Invalid service request",
+			http.StatusBadRequest,
+		)
+	}
+}
+func (ua *UnitAsset) position(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		form := ua.getPosition()
+		usecases.HTTPProcessGetRequest(w, r, &form)
+	default:
+		http.Error(w, "not supported", http.StatusNotFound)
+	}
 }
