@@ -21,7 +21,7 @@ type Traits struct {
 	Baud int    `json:"baud"`
 }
 
-// /dev/ttyACM0
+// Port on raspberry Pi: /dev/ttyACM0
 
 // UnitAsset type models the unit asset (interface) of the system
 type UnitAsset struct {
@@ -132,7 +132,7 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 
 func (ua *UnitAsset) readUART() {
 	reader := bufio.NewReader(ua.uartPort)
-
+	//infinite loop
 	for {
 		line, err := reader.ReadString('\n')
 		if err != nil {
