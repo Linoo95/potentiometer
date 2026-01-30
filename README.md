@@ -1,3 +1,6 @@
+# Potientiometer module
+This module takes an ADC value (0 - 4095) from a microcontroller and converts the value to a percentage. The module is used to simulate how a rudder is positioned with a boat, 50% equals inline with boat while 0% and 100% is max to the left or right respectively. The potentiometer is meant to act as a stearingwheel for the boat in our demonstration. One could also use degrees instead of percent but we chose to use percent in this demonstration.
+
 # Installation steps
 
 ## Step 1:
