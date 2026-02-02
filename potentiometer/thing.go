@@ -114,6 +114,9 @@ func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.Sys
 	} else if len(traits) > 0 {
 		ua.Traits = traits[0]
 	}
+
+	ua.CervicesMap["Percent"].Details = components.MergeDetails(ua.Details, map[string][]string{"Unit": {"Percent"}, "Forms": {"SignalA_v1a"}})
+
 	// open UART connection
 	log.Printf("Potentiometer %s using UART %s @ %d baud", ua.Name, ua.Port, ua.Baud)
 	configure := &serial.Config{
