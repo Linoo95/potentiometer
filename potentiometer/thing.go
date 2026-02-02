@@ -91,11 +91,22 @@ func initTemplate() components.UnitAsset {
 
 // newResource creates the Resource resource with its pointers and channels based on the configuration using the tConfig structs
 func newResource(configuredAsset usecases.ConfigurableAsset, sys *components.System) (components.UnitAsset, func()) {
+	sProtocols := components.SProtocols(sys.Husk.ProtoPort)
+
+	p := &components.Cervice{
+		Definition: "Percent",
+		Protos:     sProtocols,
+		Nodes:      make(map[string][]string, 0),
+	}
+
 	ua := &UnitAsset{
 		Name:        configuredAsset.Name,
 		Owner:       sys,
 		Details:     configuredAsset.Details,
 		ServicesMap: usecases.MakeServiceMap(configuredAsset.Services),
+		CervicesMap: components.Cervices{
+			p.Definition: p,
+		},
 	}
 	traits, err := UnmarshalTraits(configuredAsset.Traits)
 	if err != nil {
